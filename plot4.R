@@ -82,7 +82,7 @@ png(filename="plot4.png", width = 480, height = 480)
 par(mar=c(5.1,4.1,2.1,2.1))
 par(mfrow=c(2,2))
 # subplot 1
-plot(hhPower$globalactivepower ~ hhPower$dateTime, type = "l", ylab = "Global Active Power")
+plot(hhPower$globalactivepower ~ hhPower$dateTime, type = "l", xlab = "", ylab = "Global Active Power")
 # subplot 2
 plot(hhPower$voltage ~ hhPower$dateTime, type = "l", xlab = "datetime", ylab = "Voltage")
 # subplot 3
