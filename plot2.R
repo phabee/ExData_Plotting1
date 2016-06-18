@@ -78,8 +78,8 @@ hhPower <- select(hhPower, -(date:time))
 # create plot2
 # set locale to us to have english weekdays-lables
 Sys.setlocale("LC_TIME","en_US.UTF-8")
-par(mar=c(3.1,4.1,2.1,2.1))
 png(filename="plot2.png", width = 480, height = 480)
+par(mar=c(3.1,4.1,2.1,2.1))
 plot(hhPower$globalactivepower ~ hhPower$dateTime, type = "l", ylab = "Global Active Power (kilowatts)")
 dev.off()
 
