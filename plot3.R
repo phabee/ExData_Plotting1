@@ -75,7 +75,7 @@ hhPower <- filter(hhPower, dateTime >= startDate & dateTime <= endDate)
 # remove obsolete date / time character rows
 hhPower <- select(hhPower, -(date:time))
 
-# create plot2
+# create plot3
 # set locale to us to have english weekdays-lables
 Sys.setlocale("LC_TIME","en_US.UTF-8")
 png(filename="plot3.png", width = 480, height = 480)
