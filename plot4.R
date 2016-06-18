@@ -79,21 +79,18 @@ hhPower <- select(hhPower, -(date:time))
 # set locale to us to have english weekdays-lables
 Sys.setlocale("LC_TIME","en_US.UTF-8")
 png(filename="plot4.png", width = 480, height = 480)
+par(mar=c(5.1,4.1,2.1,2.1))
 par(mfrow=c(2,2))
 # subplot 1
-par(mar=c(2.1,4.1,2.1,2.1))
 plot(hhPower$globalactivepower ~ hhPower$dateTime, type = "l", ylab = "Global Active Power")
 # subplot 2
 plot(hhPower$voltage ~ hhPower$dateTime, type = "l", xlab = "datetime", ylab = "Voltage")
 # subplot 3
-par(mar=c(4.1,4.1,2.1,2.1))
 plot(hhPower$submetering1 ~ hhPower$dateTime, type = "l", xlab = "", ylab = "Energy sub metering", col = "black")
 lines(hhPower$submetering2 ~ hhPower$dateTime, col = "red")
 lines(hhPower$submetering3 ~ hhPower$dateTime, col = "blue")
 legend("topright", legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
-       pch = c(NA, NA, NA), col = c("black", "red", "blue"), lty = c(1,1,1), bty = "n", cex = 0.5)
+       pch = c(NA, NA, NA), col = c("black", "red", "blue"), lty = c(1,1,1), bty = "n", cex = 0.9)
 # subplot 4
-par(mar=c(4.1,4.1,2.1,2.1))
 plot(hhPower$globalreactivepower ~ hhPower$dateTime, type = "l", xlab = "datetime", ylab = "Global_reactive_power")
 dev.off()
-
