@@ -2,10 +2,17 @@
 # Script name:      plot1.R
 # Author:           Fabian Leuthold
 # E-Mail:           fabian.leuthold@gmail.com
-# Date:             June, 17th 2016
+# Date:             June, 18th 2016
 # 
 # Project:          Exploratory Data Analysis, Coursera
 #
+# Our overall goal here is simply to examine how household energy usage varies 
+# over a 2-day period in February, 2007. Your task is to reconstruct the fol-
+# lowing plots below, all of which were constructed using the base plotting 
+# system.
+# 
+# https://www.coursera.org/learn/exploratory-data-analysis/peer/ylVFo/course-
+# project-1
 #############################################################################
 
 # a) calculate the approx. memory needed to read the whole data
@@ -19,46 +26,52 @@
 # memRequested <- 2075259 * rowlen; memRequested
 # Total Memory Requested: 1.08 GB
 #
-# -> let's extract a subset to reduce memory load and processing 
-#   time and get some more practice with R...
+# -> that's easy manageable with 8 GB RAM. let's read the whole stuff.
 
 # ==============================================================
-# extractFileSubset: 
-# reads the file in the current wd and asserts, that within the
-# data a date from interval [startDate, endDate] is contained
-# and writes them into a new file named 'stub-*'
+# function:
+# returns a dataframe coming from a file containing a specified 
+# set of datatypes and providing a specific date format and na-
+# string
 # ==============================================================
-extractFileSubset <- function(startDate, endDate, fileName) {
-  expectedDateFormat <- '%d/%m/%Y'
-  hasDateInRange <- function(line, startDate, endDate) {
-    attrs <- strsplit(line, ";")
-    as.Date(attrs[[1]], expectedDateFormat) >= startDate && as.Date(attrs[[1]], expectedDateFormat) <= endDate
-  }
-  
-  rcon <- file(fileName, "r", blocking = FALSE)
-  wcon <- file(paste0('stub-', fileName), "w", blocking = TRUE)
-  
-  lineBuffer <-readLines(rcon)
-  # loop through all lines of input file
-  for (i in 1:length(lineBuffer)){
-    # if we're in the header or a valid date is found -> take line over
-    if (i == 1 || hasDateInRange(lineBuffer[i], startDate, endDate)) {
-      print(lineBuffer[i])
-      writeLines(lineBuffer[i], wcon)
-    }
-  }
-  close(wcon)
-  close(rcon)
+readTable <- function(fileName, fileDateFormat, dataTypes, naString) {
+  read.table(file = sourceFile, header = TRUE, sep = ";", colClasses
+             = dataTypes, na.strings = naString)
+}
+
+# ==============================================================
+# function:
+# clean label-names, convert to lowercase, remove blanks
+# ==============================================================
+washlabels <- function(labels) {
+  lbl <- sapply(labels, tolower, USE.NAMES = FALSE)
+  lbl <- sapply(lbl, gsub, pattern = "[?(-()#$!_ ]", replacement = "", USE.NAMES = FALSE)
+  lbl <- sapply(lbl, gsub, pattern = "[,.]", replacement = "-", USE.NAMES = FALSE)
+  lbl
 }
 
 # ==============================================================
 # main programm
 # ==============================================================
+library(dplyr)
 setwd("/home/phabi/Desktop/coursera/exploratory data analysis/git/ExData_Plotting1")
-# set start/end-date to filter the file
-startDate <- as.Date('2007-02-01', '%Y-%m-%d')
-endDate <- as.Date('2007-02-02', '%Y-%m-%d')
+# set start/end-date to extract from the data
+startDate <- as.POSIXct('2007-02-01', '%Y-%m-%d')
+endDate <- as.POSIXct('2007-02-02', '%Y-%m-%d')
+# define file parameters
 sourceFile <- 'household_power_consumption.txt'
-extractFileSubset(startDate, endDate, sourceFile)
+dataTypes <- c("character", "character", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")
+fileDateFormat <- "%d/%m/%Y %H:%M:%S"
+naString <- "?"
 
+# read data
+hhPower <- readTable(sourceFile, fileDateFormat, dataTypes, naString)
+# wash the labels from the data set
+names(hhPower) <- washlabels(names(hhPower))
+# generate date-column from date/time character column
+hhPower <- mutate(hhPower, dateTime = as.POSIXct(strptime(paste(date, time, " "),format = fileDateFormat)))
+# now filter for desired data-range
+hhPower <- filter(hhPower, dateTime >= startDate & dateTime <= endDate)
+# remove obsolete date / time character rows
+hhPower <- select(hhPower, -(date:time))
 
