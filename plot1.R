@@ -56,8 +56,8 @@ washlabels <- function(labels) {
 library(dplyr)
 setwd("/home/phabi/Desktop/coursera/exploratory data analysis/git/ExData_Plotting1")
 # set start/end-date to extract from the data
-startDate <- as.POSIXct('2007-02-01', '%Y-%m-%d')
-endDate <- as.POSIXct('2007-02-02', '%Y-%m-%d')
+startDate <- as.POSIXct('2007-02-01 00:00:00', '%Y-%m-%d %H:%M:%S', tz = "", usetz = FALSE)
+endDate <- as.POSIXct('2007-02-02 23:59:59', '%Y-%m-%d %H:%M:%S', tz = "", usetz = FALSE)
 # define file parameters
 sourceFile <- 'household_power_consumption.txt'
 dataTypes <- c("character", "character", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")
@@ -74,4 +74,9 @@ hhPower <- mutate(hhPower, dateTime = as.POSIXct(strptime(paste(date, time, " ")
 hhPower <- filter(hhPower, dateTime >= startDate & dateTime <= endDate)
 # remove obsolete date / time character rows
 hhPower <- select(hhPower, -(date:time))
+
+# create plot1
+png(filename="plot1.png", width = 480, height = 480)
+hist(x = hhPower$globalactivepower, xlab = "Global Active Power (kilowatts)", ylab = "Frequency", col = "red", main = "Global Active Power")
+dev.off()
 
